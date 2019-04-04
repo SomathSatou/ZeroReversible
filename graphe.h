@@ -4,42 +4,25 @@
 #include <iostream>
 #include <vector>
 #include <array>
-
-class Arc;
-
-class Noeud{
-private :
-    static int id;
-    int _ID_;
-    bool final;
-    std::vector<Arc> arcs;
-
-public:
-    Noeud(bool _final_);
-    Noeud();
-};
-
-class Arc{
-private :
-    char symbole;
-    Noeud* destination;
-
-public :
-    Arc(char _symbole_, Noeud _dest_);
-};
+#include <string>
+#include <iterator>
 
 class Graphe{
     // le caractère § sert pour indiquer qu'il n'existe pas d'arc entre deux état
 private :
     std::vector<std::vector<char>> matrice_adj;
-    Noeud initial;
+    std::vector<char> alphabet;
+    std::vector<std::string> dictionaire;
+    std::vector<int> finals; //liste des états finaux
 
 public :
-    Graphe(Noeud racine);
-    bool checkDerterminisme();
-    bool checkUniqFinal();
-    bool checkZeroRever();
-    void fusionNoeud(Noeud& A,Noeud& B);
+    Graphe(std::vector<char>,std::vector<std::string>);
+    void affichage();
+    std::vector<std::tuple<int, int>> listeArc();
+    bool checkDerterminisme(std::vector<int>&);
+    bool checkUniqFinal(std::vector<int>&);
+    bool checkZeroRever(std::vector<int>&);
+    void fusionNoeud(std::vector<int>&);
     void rendreZR();
 
 
