@@ -8,6 +8,26 @@
 
 using namespace std;
 
+std::vector<int> Graphe::getFinals() const
+{
+    return finals;
+}
+
+void Graphe::setFinals(const std::vector<int> &value)
+{
+    finals = value;
+}
+
+std::vector<std::vector<char> > Graphe::getMatrice_adj() const
+{
+    return matrice_adj;
+}
+
+void Graphe::setMatrice_adj(const std::vector<std::vector<char> > &value)
+{
+    matrice_adj = value;
+}
+
 Graphe::Graphe(std::vector<char> alphabet,std::vector<std::string> dictionaire){
     this->alphabet = alphabet;
     this->dictionaire = dictionaire;
@@ -115,42 +135,77 @@ bool Graphe::checkZeroRever(std::vector<int> &fusion){
     return true;
 }
 
-void Graphe::fusionNoeud(std::vector<int> &fusion){
-    //fonction permettant de fusionner deux noeud en ajoutant les arc qui vont et qui vienne sur B a A puis en supprimant B
-    for(int i = 1;i<fusion.size()-1;i++){
-          for(int j = 0; j<this->matrice_adj.at(fusion.at(0)).size();j++){
-              if(this->matrice_adj.at(fusion.at(0)).at(j)!='$'){
-                    std::cout<<"coucou"<<std::endl;
-                  this->matrice_adj.at(fusion.at(0)).at(j) =this->matrice_adj.at(fusion.at(i)).at(j);
-              }
-          }
+std::vector<std::vector<char>> Graphe::fusionNoeud(std::vector<int> &fusion){
+    //fonction permettant de fusionner deux noeud en ajoutant les arc qui vont et qui vienne sur B a A puis en supprimant B4
+    std::vector<std::vector<char>> ret;
+    for(int it = 0 ; it<fusion.size(); it++){
+        std::cout<<fusion.at(it);
     }
-    for(int i = 1;i<fusion.size()-1;i++){
-        this->matrice_adj.erase(this->matrice_adj.begin()+fusion.at(i));
-    }
-    for(int j = 1;j<fusion.size()-1;j++){
+    std::cout<<std::endl;
+    int rece = fusion.at(0);
+        int supp = fusion.at(1);
         for(int i = 0;i<this->matrice_adj.size();i++){
-            this->matrice_adj.at(i).erase(this->matrice_adj.at(i).begin()+fusion[j]);
+            ret.push_back(std::vector<char>(this->matrice_adj.size(),' '));
+            for(int j = 0; j<this->matrice_adj.at(i).size();j++){
+                ret.at(i).at(j) = this->matrice_adj.at(i).at(j);
+                if(i==supp){
+                    ret.at(rece).at(j)=this->matrice_adj.at(i).at(j);
+                    //ret.at(j).at(rece)=this->matrice_adj.at(j).at(i);
+                }
+            }
         }
-    }
+        std::cout<<"la copie c'est ok"<<std::endl;
+        for(int i = 0;i<ret.at(rece).size();i++){
+            ret.at(rece).at(i) = ret.at(supp).at(i);
+        }
+        std::cout<<"la premier supression aussi"<<std::endl;
+        ret.erase(ret.begin()+supp);
+        for(int i = 0;i<ret.at(0).size();i++){
+            ret.at(i).erase(ret.at(i).begin()+supp);
+        }
+        fusion.erase(fusion.begin()+1);
+        std::cout<<"arriver des finalistes"<<std::endl;
+        std::vector<int> newFinals;
+        for(int m =0;m< this->finals.size();m++){
+            if(this->finals.at(m)>supp){
+                newFinals.push_back(this->finals.at(m)-1);
+            }
+            if(this->finals.at(m)<supp){
+                newFinals.push_back(this->finals.at(m));
+            }
+        }
+         this->setFinals(newFinals);
+            fusion=this->getFinals();
+            for(int it = 0 ; it<fusion.size(); it++){
+                std::cout<<fusion.at(it);
+            }
+            std::cout<<std::endl;
+
+    return ret;
 }
 
 void Graphe::rendreZR(){
     // se sert des fonction précédente pour rendre le graphe zero_réversible
     //création du grapphe
-    std::vector<int> noeudFusion;
+    std::vector<int>  noeudFusion;
     bool fin = true;
     int compt = 0;
-    while(fin&&compt<2){
+    while(fin&&compt<20){
     if (checkDerterminisme(noeudFusion)){
         if (checkUniqFinal(noeudFusion)){
             if( checkZeroRever(noeudFusion)){
                     fin = false;
+            }else{
+                std::cout<< "non ZR"<<std::endl;
+                this->matrice_adj = this->fusionNoeud(noeudFusion);
             }
+        }else{
+            std::cout<< "non one final"<<std::endl;
+            this->matrice_adj = this->fusionNoeud(noeudFusion);
         }
     }else{
     std::cout<< "non deterministe"<<std::endl;
-    this->fusionNoeud(noeudFusion);
+    this->setMatrice_adj(this->fusionNoeud(noeudFusion));
     }
     this->affichage();
     compt++;

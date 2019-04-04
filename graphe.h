@@ -22,11 +22,16 @@ public :
     bool checkDerterminisme(std::vector<int>&);
     bool checkUniqFinal(std::vector<int>&);
     bool checkZeroRever(std::vector<int>&);
-    void fusionNoeud(std::vector<int>&);
+    std::vector<std::vector<char>> fusionNoeud(std::vector<int>&);
+
     void rendreZR();
 
 
 
+    std::vector<int> getFinals() const;
+    void setFinals(const std::vector<int> &value);
+    std::vector<std::vector<char> > getMatrice_adj() const;
+    void setMatrice_adj(const std::vector<std::vector<char> > &value);
 };
 
 #endif // GRAPHE_H

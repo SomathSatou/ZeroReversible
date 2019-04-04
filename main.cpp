@@ -13,6 +13,7 @@ int main()
     dict.push_back("aa");
     dict.push_back("b");
     dict.push_back("bb");
+    dict.push_back("aaa");
 
     std::vector<char> alpha;
     alpha.push_back('a');
