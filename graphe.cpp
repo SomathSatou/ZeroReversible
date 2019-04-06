@@ -62,7 +62,7 @@ Graphe::Graphe(std::vector<char> alphabet,std::vector<std::string> dictionaire){
         std::cout << elt << " ";
     }
     std::cout<<std::endl;
-    for(std::tuple<int, int> elt : listeArc()){
+    for(std::tuple<int, int,char> elt : listeArc()){
         std::cout<<"arc "<<std::get<0>(elt)<<"->"<<std::get<1>(elt)<<std::endl;
     }
 
@@ -104,14 +104,14 @@ void Graphe::affichage()
     }
 }
 
-std::vector<std::tuple<int, int>> Graphe::listeArc()
+std::vector<std::tuple<int, int, char>> Graphe::listeArc()
 {
-    std::vector<std::tuple<int, int>> ret;
+    std::vector<std::tuple<int, int,char>> ret;
     for(int i = this->matrice_adj.size()-1;i>=0;i--)
         for( int j = this->matrice_adj.size()-1;j>i;j--)
             for( int d = 0;d<this->matrice_adj.at(i).at(j).size();d++){
                 if(this->matrice_adj.at(i).at(j).at(d)!='$')
-                    ret.push_back(std::make_tuple(i,j));
+                    ret.push_back(std::make_tuple(i,j,this->matrice_adj.at(i).at(j).at(d)));
             }
     return ret;
 
@@ -244,6 +244,19 @@ std::vector<char> Graphe::Union(std::vector<char> l1, std::vector<char> l2){
     }
     l1 = clearDols(l1);
     return l1;
+}
+
+string Graphe::affichageUI()
+{
+    string ret = "node [shape = doublecircle];";
+    for(auto elt : this->finals){
+        ret += " "+std::to_string(elt);
+    }
+    ret+= ";\nnode [shape = circle];\n";
+    for (tuple<int,int,char> arc:listeArc()){
+        ret+= std::to_string(std::get<0>(arc))+" -> "+std::to_string(std::get<1>(arc))+" [ label = \""+std::get<2>(arc)+"\" ];\n";
+    }
+    return ret;
 }
 
 void Graphe::rendreZR(){

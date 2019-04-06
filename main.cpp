@@ -22,6 +22,7 @@ int main()
     Graphe test = Graphe(alpha,dict);
 
     test.rendreZR();
+    std::cout<<test.affichageUI()<<std::endl;
     return 0;
 
 }

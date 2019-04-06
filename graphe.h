@@ -18,12 +18,13 @@ private :
 public :
     Graphe(std::vector<char>,std::vector<std::string>);
     void affichage();
-    std::vector<std::tuple<int, int>> listeArc();
+    std::vector<std::tuple<int, int,char>> listeArc();
     bool checkDerterminisme(std::vector<int>&);
     bool checkUniqFinal(std::vector<int>&);
     bool checkZeroRever(std::vector<int>&);
     std::vector<std::vector<std::vector<char> > > fusionNoeud(std::vector<int>&);
     std::vector<char> Union(std::vector<char>,std::vector<char>);
+    std::string affichageUI();
 
     void rendreZR();
 
