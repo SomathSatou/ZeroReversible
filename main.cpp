@@ -18,6 +18,7 @@ int main()
     std::vector<char> alpha;
     alpha.push_back('a');
     alpha.push_back('b');
+
     Graphe test = Graphe(alpha,dict);
 
     test.rendreZR();
