@@ -108,7 +108,7 @@ std::vector<std::tuple<int, int, char>> Graphe::listeArc()
 {
     std::vector<std::tuple<int, int,char>> ret;
     for(int i = this->matrice_adj.size()-1;i>=0;i--)
-        for( int j = this->matrice_adj.size()-1;j>i;j--)
+        for( int j = this->matrice_adj.size()-1;j>=0;j--)
             for( int d = 0;d<this->matrice_adj.at(i).at(j).size();d++){
                 if(this->matrice_adj.at(i).at(j).at(d)!='$')
                     ret.push_back(std::make_tuple(i,j,this->matrice_adj.at(i).at(j).at(d)));
@@ -165,6 +165,18 @@ bool Graphe::checkUniqFinal(std::vector<int> &fusion){
 
 bool Graphe::checkZeroRever(std::vector<int> &fusion){
     // verifie qu'il n'y a pas deux (ou plusieurs) arc avec la même valeurs menant au même noeud
+    for(tuple<int,int,char> elt : this->listeArc()){
+        for(tuple<int,int,char> elt2 : this->listeArc()){
+            if(std::get<0>(elt)!=std::get<0>(elt2)){
+                if((std::get<1>(elt)==std::get<1>(elt2))&&(std::get<2>(elt)==std::get<2>(elt2))){
+                        fusion.push_back(std::get<0>(elt));
+                        fusion.push_back(std::get<0>(elt2));
+                        std::sort(fusion.begin(),fusion.end());
+                        return false;
+                }
+            }
+        }
+    }
     return true;
 }
 
@@ -177,7 +189,6 @@ std::vector<std::vector<std::vector<char>>> Graphe::fusionNoeud(std::vector<int>
     std::cout<<std::endl;
     int rece = fusion.at(0);
         int supp = fusion.at(1);
-        std::cout<<"soefsef "<<this->matrice_adj.size()<<std::endl;
         for(int i = 0;i<this->matrice_adj.size();i++){
             ret.push_back(std::vector<std::vector<char>>(this->matrice_adj.at(0).size()));
         }
@@ -193,34 +204,36 @@ std::vector<std::vector<std::vector<char>>> Graphe::fusionNoeud(std::vector<int>
                 }
             }
         }
-        //std::cout<<"la copie c'est ok"<<std::endl;
         for(int i = 0;i<ret.at(rece).size();i++){
             ret.at(rece).at(i)=Union(ret.at(rece).at(i),ret.at(supp).at(i)); ;
         }
-        //std::cout<<"la premier supression aussi"<<std::endl;
         ret.erase(ret.begin()+supp);
         for(int i = 0;i<ret.at(0).size();i++){
             ret.at(i).erase(ret.at(i).begin()+supp);
         }
         fusion.erase(fusion.begin()+1);
-        std::cout<<"arriver des finalistes"<<std::endl;
         std::vector<int> newFinals;
         for(int m =0;m< this->finals.size();m++){
-            if(this->finals.at(m)>supp){
-                newFinals.push_back(this->finals.at(m)-1);
+            if(this->finals.at(m)==supp){
+                if(std::find(newFinals.begin(),newFinals.end(),rece)==newFinals.end())
+                    newFinals.push_back(rece);
+            }else{
+                if(this->finals.at(m)<supp){
+                    newFinals.push_back(this->finals.at(m));
+                    }else{
+                        newFinals.push_back(this->finals.at(m)-1);
+                    }
+                 }
             }
-            if(this->finals.at(m)<supp){
-                newFinals.push_back(this->finals.at(m));
-            }
+        std::sort(newFinals.begin(),newFinals.end());
+        this->setFinals(newFinals);
+        fusion=this->getFinals();
+        for(int it = 0 ; it<fusion.size(); it++){
+            std::cout<<fusion.at(it);
         }
-         this->setFinals(newFinals);
-            fusion=this->getFinals();
-            for(int it = 0 ; it<fusion.size(); it++){
-                std::cout<<fusion.at(it);
-            }
-            std::cout<<std::endl;
+        std::cout<<"final"<<std::endl;
 
-            return ret;
+        return ret;
 }
 std::vector<char> clearDols(std::vector<char> list){
     if(list.size()>1){
@@ -259,30 +272,56 @@ string Graphe::affichageUI()
     return ret;
 }
 
-void Graphe::rendreZR(){
+std::vector<std::vector<std::vector<char> > > Graphe::doublon()
+{
+    for(int i = 0;i<this->matrice_adj.size();i++){
+        for(int j = 0; j<this->matrice_adj.at(i).size();j++){
+            std::vector<char> symb;
+            std::vector<char> tmp;
+            for( int d = 0;d<this->matrice_adj.at(i).at(j).size();d++){
+                if(std::find(symb.begin(),symb.end(),this->matrice_adj.at(i).at(j).at(d))!=symb.end()||matrice_adj.at(i).at(j).at(d)=='$'){
+                }else{
+                    symb.push_back(this->matrice_adj.at(i).at(j).at(d));
+                    tmp.push_back(this->matrice_adj.at(i).at(j).at(d));
+                }
+            }
+        matrice_adj.at(i).at(j)=tmp;
+        }
+    }
+    std::vector<std::vector<std::vector<char>>> ret = this->matrice_adj;
+    return ret;
+}
+
+void Graphe::rendreZR(int maxTour){
     // se sert des fonction précédente pour rendre le graphe zero_réversible
     //création du grapphe
     std::vector<int>  noeudFusion;
     bool fin = true;
     int compt = 0;
-    while(fin&&compt<20){
+    while(fin&&compt<maxTour){
     if (checkDerterminisme(noeudFusion)){
         if (checkUniqFinal(noeudFusion)){
             if( checkZeroRever(noeudFusion)){
                     fin = false;
             }else{
                 std::cout<< "non ZR"<<std::endl;
-                this->matrice_adj = this->fusionNoeud(noeudFusion);
+                this->setMatrice_adj(this->fusionNoeud(noeudFusion));
+                this->setMatrice_adj(this->doublon());
+
             }
         }else{
             std::cout<< "non one final"<<std::endl;
             this->matrice_adj = this->fusionNoeud(noeudFusion);
+            this->setMatrice_adj(this->doublon());
+
         }
     }else{
     std::cout<< "non deterministe"<<std::endl;
     this->setMatrice_adj(this->fusionNoeud(noeudFusion));
+    this->setMatrice_adj(this->doublon());
+
     }
-    this->affichage();
+   std::cout<<this->affichageUI();
     compt++;
     noeudFusion.clear();
     }

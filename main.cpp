@@ -9,11 +9,14 @@ using namespace std;
 int main()
 {
     std::vector<std::string> dict;
-    dict.push_back("ab");
-    dict.push_back("aa");
     dict.push_back("b");
-    dict.push_back("bb");
-    dict.push_back("aaa");
+    dict.push_back("ab");
+    dict.push_back("aab");
+    dict.push_back("ba");
+    //dict.push_back("aaa");
+    //dict.push_back("a");
+
+
 
     std::vector<char> alpha;
     alpha.push_back('a');
@@ -21,7 +24,7 @@ int main()
 
     Graphe test = Graphe(alpha,dict);
 
-    test.rendreZR();
+    test.rendreZR(20);
     std::cout<<test.affichageUI()<<std::endl;
     return 0;
 

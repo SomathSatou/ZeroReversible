@@ -25,8 +25,9 @@ public :
     std::vector<std::vector<std::vector<char> > > fusionNoeud(std::vector<int>&);
     std::vector<char> Union(std::vector<char>,std::vector<char>);
     std::string affichageUI();
+    std::vector<std::vector<std::vector<char> > > doublon();
 
-    void rendreZR();
+    void rendreZR(int);
 
 
 
