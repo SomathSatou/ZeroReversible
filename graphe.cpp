@@ -46,10 +46,10 @@ Graphe::Graphe(std::vector<char> alphabet,std::vector<std::string> dictionaire){
             if(j==0){
                 etat++;
                 this->matrice_adj.at(0).at(etat)=Union(this->matrice_adj.at(0).at(etat),std::vector<char>(1,mot[j]));
-                this->matrice_adj.at(etat).at(0)=Union(this->matrice_adj.at(etat).at(0),std::vector<char>(1,mot[j]));
+                //this->matrice_adj.at(etat).at(0)=Union(this->matrice_adj.at(etat).at(0),std::vector<char>(1,mot[j]));
             }else{
                 this->matrice_adj.at(etat).at(etat+1)=Union(this->matrice_adj.at(etat).at(etat+1),std::vector<char>(1,mot[j]));
-                this->matrice_adj.at(etat+1).at(etat)=Union(this->matrice_adj.at(etat+1).at(etat),std::vector<char>(1,mot[j]));
+                //this->matrice_adj.at(etat+1).at(etat)=Union(this->matrice_adj.at(etat+1).at(etat),std::vector<char>(1,mot[j]));
                 etat++;
 
             }

@@ -9,10 +9,10 @@ using namespace std;
 int main()
 {
     std::vector<std::string> dict;
-    dict.push_back("b");
+    dict.push_back("aa");
     dict.push_back("ab");
     dict.push_back("aab");
-    dict.push_back("ba");
+    //dict.push_back("ba");
     //dict.push_back("aaa");
     //dict.push_back("a");
 
