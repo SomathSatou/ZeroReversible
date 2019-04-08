@@ -197,16 +197,18 @@ std::vector<std::vector<std::vector<char>>> Graphe::fusionNoeud(std::vector<int>
                 for( int d = 0;d<this->matrice_adj.at(i).at(j).size();d++){
                     ret.at(i).at(j).push_back(this->matrice_adj.at(i).at(j).at(d));
                     if(i==supp){
+                        ret.at(rece).at(j)=Union(ret.at(rece).at(j),this->matrice_adj.at(i).at(j));
+                        ret.at(j).at(rece)=Union(ret.at(j).at(rece),this->matrice_adj.at(j).at(i));
 
-                        ret.at(rece).at(j)=Union(this->matrice_adj.at(rece).at(j),this->matrice_adj.at(i).at(j));
-                        ret.at(j).at(rece)=Union(this->matrice_adj.at(j).at(rece),this->matrice_adj.at(j).at(i));
-                    }
+                   }
                 }
             }
         }
-        for(int i = 0;i<ret.at(rece).size();i++){
+        ret.at(rece).at(rece)=Union(ret.at(rece).at(rece),ret.at(rece).at(supp));
+        ret.at(rece).at(rece)=Union(ret.at(rece).at(rece),ret.at(supp).at(rece));
+        /*for(int i = 0;i<ret.at(rece).size();i++){
             ret.at(rece).at(i)=Union(ret.at(rece).at(i),ret.at(supp).at(i)); ;
-        }
+        }*/
         ret.erase(ret.begin()+supp);
         for(int i = 0;i<ret.at(0).size();i++){
             ret.at(i).erase(ret.at(i).begin()+supp);
@@ -232,7 +234,6 @@ std::vector<std::vector<std::vector<char>>> Graphe::fusionNoeud(std::vector<int>
             std::cout<<fusion.at(it);
         }
         std::cout<<"final"<<std::endl;
-
         return ret;
 }
 std::vector<char> clearDols(std::vector<char> list){
@@ -311,7 +312,7 @@ void Graphe::rendreZR(int maxTour){
             }
         }else{
             std::cout<< "non one final"<<std::endl;
-            this->matrice_adj = this->fusionNoeud(noeudFusion);
+            this->setMatrice_adj(this->fusionNoeud(noeudFusion));
             this->setMatrice_adj(this->doublon());
 
         }
